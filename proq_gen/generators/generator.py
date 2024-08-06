@@ -20,7 +20,7 @@ def get_generator_chain(ideation_chain, db_store):
                 "statement1": itemgetter("statement"),
                 "statement2": itemgetter("statement")
                 | single_item_retriever
-                | (lambda x: x[0].page_content),
+                | (lambda x: x[0].page_content if x else None),
             }
         )
         | RunnablePassthrough.assign(
