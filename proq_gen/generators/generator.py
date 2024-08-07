@@ -1,6 +1,9 @@
 from .equal_check import equal_check_chain
 from operator import itemgetter
 from langchain_core.runnables import RunnablePassthrough, RunnableParallel, RunnableLambda
+from .test_case import get_test_case_chain
+
+test_case_chain = get_test_case_chain(lang="python", n_testcases=3)
 
 extract_text_metadata_chain = {
     "texts": RunnableLambda(itemgetter("statement")).map(),
@@ -8,6 +11,7 @@ extract_text_metadata_chain = {
         "solution":itemgetter("solution"),
         "tags": lambda x: ",".join(x.get("tags", [])),
         "data_formats":lambda x: ",".join(x.get("data_formats", [])),
+        "test_cases": RunnableLambda(lambda x: test_case_chain.invoke({"problem_statement": x["statement"]}))
     }).map()
 }
 
@@ -28,6 +32,7 @@ def get_generator_chain(ideation_chain, db_store):
             | equal_check_chain
         )
     )
+
 
     return (
         ideation_chain
