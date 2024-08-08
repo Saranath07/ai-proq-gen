@@ -4,7 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_groq import ChatGroq
 
-model = ChatGroq(temperature=.7,model="llama3-70b-8192")
+model = ChatGroq(temperature=.7,model="llama-3.1-8b-instant")
 
 prompt = ChatPromptTemplate.from_messages([
     ('system', """
