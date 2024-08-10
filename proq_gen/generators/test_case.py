@@ -49,11 +49,11 @@ def get_test_case_chain(lang, n_testcases):
     )
 
 
-test_case_chain = get_test_case_chain(
-    lang="Python",
-    n_testcases=4
-)
+# test_case_chain = get_test_case_chain(
+#     lang="Python",
+#     n_testcases=4
+# )
 
 
-result = test_case_chain.invoke({"problem_statement":"Write a function that takes a string and returns its reverse.", "solution":"def reverse_string(s):\n    return s[::-1]"})
-print(json.dumps(result, indent=2))
+# result = test_case_chain.invoke({"problem_statement":"Write a function that takes a string and returns its reverse.", "solution":"def reverse_string(s):\n    return s[::-1]"})
+# print(json.dumps(result, indent=2))
