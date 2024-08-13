@@ -1,4 +1,4 @@
-def sum_squares_of_matrix(matrix:list[list[int]])->int:
-    return sum(map(lambda x: x**2, [num for row in matrix for num in row]))
+def index_of_max_element(nums:list[int])->int:
+    return nums.index(max(nums))
 import sys
 exec(sys.stdin.read())

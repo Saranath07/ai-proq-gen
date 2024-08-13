@@ -1,7 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnableAssign
+from langchain_core.runnables import RunnableAssign, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_groq import ChatGroq
+import subprocess
 
 import json
 import random
@@ -34,6 +35,24 @@ model = ChatGroq(temperature=0.7, model="llama3-70b-8192")
 
 test_case_processor = model | JsonOutputParser()
 
+def verify_and_update_testcases(solution, testcases):
+    suffix = """
+import sys
+exec(sys.stdin.read())
+"""
+    with open("test.py", "w") as f:
+        f.write(solution + suffix)
+
+    updated = False
+    for testcase in testcases:
+        process = subprocess.run(["python", "test.py"], input=testcase["input"], text=True, capture_output=True)
+        actual_output = process.stdout.strip()
+        
+        if actual_output != testcase['output']:
+            testcase['output'] = actual_output
+            updated = True
+
+    return testcases, updated
 
 
 def get_test_case_chain(lang, n_testcases):
@@ -47,6 +66,9 @@ def get_test_case_chain(lang, n_testcases):
         | prompt
         | test_case_processor
     )
+
+
+# 
 
 
 # test_case_chain = get_test_case_chain(
