@@ -1,4 +1,4 @@
-#!/home/saranath/ai-proq-gen/myvenv/bin/python
+#!/home/saranathp/ai-proq-gen/myvenv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
