@@ -1,0 +1,120 @@
+{
+  "data_formats": [
+    "int",
+    "str",
+    "range",
+    "collections of int and str",
+    "simple dicts",
+    "collection of collections of int and str",
+    "list of key value pair tuples",
+    "list of dict",
+    "words in multi-line passage",
+    "characters in a sentence",
+    "words seperated by a delimeter",
+    "matrix (list of list int or str)"
+  ],
+  "misc": ["continious sequence"],
+  "data_structures":{
+    "concepts":{
+      "numbers":[
+        "simple integer math",
+        "number checks",
+        "divisibiliy checks",
+        "number digit checks"
+      ],
+      "strings":[
+        "string extraction",
+        "string checks",
+        "string manipulation",
+        "string slicing",
+        "string indexing",
+        "basic string methods"
+      ]
+    }
+  },
+  "data_processing": {
+    "concepts": [
+      "any",
+      "all",
+      "sum",
+      "concatenation",
+      "len",
+      "index",
+      "first",
+      "last",
+      "middle",
+      "n-th",
+      "first-k",
+      "last-k",
+      "unique",
+      "n_unique",
+      "type-conversion",
+      "string-operations",
+      "string extraction",
+      "digit extraction",
+      "type-checks",
+      "split",
+      "min",
+      "max",
+      "min with key",
+      "max with key",
+      "slicing",
+      "sorted",
+      "sorted with key",
+      "reverse",
+      "zip",
+      "enumerate",
+      "flattening",
+      "matrix",
+      "matrix-along-axis",
+      "map",
+      "filter",
+      "lambda",
+      "grouping",
+      "counting",
+      "group-count"
+    ],
+
+    "ideation": {
+      "example_concepts": [
+        "sum",
+        "filter",
+        "int",
+        "index",
+        "matrix",
+        "max",
+        "str",
+        "count",
+        "words",
+        "dict",
+        "str.join"
+      ],
+      "examples": [
+        {
+          "statement": "Find sum of the squares of the even numbers in a list",
+          "solution": "def sum_squares_of_even(nums:list):\n    return sum(map(lambda x: x**2, filter(lambda x: x%2==0, nums)))",
+          "tags": ["numeric", "map", "aggregation", "filtering"],
+          "data_formats": ["int", "list"]
+        },
+        {
+          "statement": "Find the index of the row with the maximum number of zeros in it.",
+          "solution": "def row_with_max_zeros(matrix:list[list[int]])->int:\n    return max(range(len(matrix)), key= lambda x: matrix[x].count(0))",
+          "tags": ["matrix", "count", "max", "index"],
+          "data_formats": ["int", "list[list]"]
+        },
+        {
+          "statement": "Given an integer, create a string with its digits as words separated by hyphens.",
+          "solution": "num_word = {\n    0: 'zero',1: 'one',2: 'two',3: 'three',\n    4: 'four',5: 'five',6: 'six',7: 'seven',\n    8: 'eight',9: 'nine'\n}\n\ndef num_to_hypen_string(num:int)->str:\n    return '-'.join(map(num_word.get, map(int, str(num))))",
+          "tags": ["mapping", "split", "concatenation", "type-conversion"],
+          "data_formats": ["int", "str", "dict"]
+        },
+        {
+          "statement": "Find the word with the maximum number of times 'a' is repeated.",
+          "solution": "def max_repeat_a(sentence:str)->str:\n    return max(sentence.split(), key=lambda x:x.count('a'))",
+          "tags": ["count", "max", "split"],
+          "data_formats": ["str"]
+        }
+      ]
+    }
+  }
+}
