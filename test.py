@@ -1,4 +1,5 @@
-def index_of_max_element(nums:list[int])->int:
-    return nums.index(max(nums))
-import sys
-exec(sys.stdin.read())
+def sum_of_ints(s:str)->int:
+    return sum(map(int, filter(str.isdigit, s)))
+        import sys
+        exec(sys.stdin.read())
+        

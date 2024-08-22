@@ -15,6 +15,7 @@ Create ideas for "n_problems" number of problem statements with solutions as jso
 Also try to mix multiple concepts in the same problem.
 The problem statement can have data types, but should not contain any {lang} specific functions or classes.
 Resopnd only in JSON. Do not begin with here are the.
+Strictly give output in JSON only. No other strings or charecters are allowed.
 """,
         ),
         ("human", "n_problems:4\nideation_concepts:\n{example_concepts}"),
