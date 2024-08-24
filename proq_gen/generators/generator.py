@@ -9,6 +9,7 @@ extract_text_metadata_chain = {
     "texts": RunnableLambda(itemgetter("statement")).map(),
     "metadatas": RunnableParallel({
         "question_template": itemgetter("question_template"),
+        "function_name": itemgetter("function_name"),
         "solution":itemgetter("solution"),
         "tags": lambda x: ",".join(x.get("tags", [])),
         "data_formats":lambda x: ",".join(x.get("data_formats", []))

@@ -7,6 +7,7 @@ def data_to_json(questions):
         question_obj = {
             "question": doc.page_content,
             "question_template" : doc.metadata.get("question_template"),
+            "function_name" : doc.metadata.get("function_name"),
             "data_formats": doc.metadata.get("data_formats", ""),
             # "solution": doc.metadata.get("solution", ""),
             "tags": doc.metadata.get("tags", ""),

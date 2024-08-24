@@ -1,5 +1,6 @@
-def filter_short_strings(lst:list[str])->list[str]:
-    return list(filter(lambda x: len(x) >= 3, lst))
+def count_words(sentence:str)->dict:
+    words = sentence.split()
+    return {word: words.count(word) for word in set(words)}
         import sys
         exec(sys.stdin.read())
         
