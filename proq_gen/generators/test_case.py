@@ -12,7 +12,7 @@ prompt = ChatPromptTemplate.from_messages([
 You are a test case creator. Generate {n_testcases} test cases for the given problem statement in {lang}.
 Each test case should include input and expected output.
      Use the function template to generate the test cases. Input should have a suffix code to execute the function. print the repr of the object returned.
-Respond only in JSON format. Do not include any additional text.
+Respond only in JSON format. Do not include any additional text. DO NOT ADD ANY COMMENTS IN THE JSON FILE
 """),
     ("human", "Problem: Given two integers a and b, find their sum.\nn_testcases: 3\n soltuion : def add(a, b):\n    return a + b\n"),
     ("ai", """[

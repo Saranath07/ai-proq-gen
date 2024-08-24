@@ -1,5 +1,5 @@
-def sum_integers_in_string(s:str)->int:
-    return sum(map(int, filter(str.isdigit, ''.join(filter(str.isalpha, s))))
+def filter_short_strings(lst:list[str])->list[str]:
+    return list(filter(lambda x: len(x) >= 3, lst))
         import sys
         exec(sys.stdin.read())
         
