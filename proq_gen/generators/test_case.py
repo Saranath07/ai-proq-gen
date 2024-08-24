@@ -1,5 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableAssign, RunnablePassthrough
+from operator import itemgetter
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_groq import ChatGroq
 import subprocess
@@ -28,7 +29,7 @@ Respond only in JSON format. Do not include any additional text.
 ]
 
 """),
-    ("human", "Problem: {problem_statement}\nn_testcases: {n_testcases}\n solution: {solution}\n"),
+    ("human", "Problem: {statement}\nn_testcases: {n_testcases}\n solution: {solution}\n"),
 ])
 
 model = ChatGroq(temperature=0.7, model="llama3-70b-8192")
@@ -43,30 +44,25 @@ exec(sys.stdin.read())
     with open("test.py", "w") as f:
         f.write(solution + suffix)
 
-    updated = False
+    
     for testcase in testcases:
-        process = subprocess.run(["python", "test.py"], input=testcase["input"], text=True, capture_output=True)
+        process = subprocess.run(["python3", "test.py"], input=testcase["input"], text=True, capture_output=True)
         actual_output = process.stdout.strip()
         
         if actual_output != testcase['output']:
             testcase['output'] = actual_output
-            updated = True
+            
 
-    return testcases, updated
+    return testcases
 
 
 def get_test_case_chain(lang, n_testcases):
-    return (
-        RunnableAssign(
-            {
-                "n_testcases": lambda x: n_testcases,
-                "lang": lambda x: lang
-            }
-        )
-        | prompt
-        | test_case_processor
+    partial_prompt = prompt.partial(lang=lang, n_testcases=n_testcases)
+    return RunnablePassthrough.assign(
+        testcases =  partial_prompt | test_case_processor
+    ) | RunnablePassthrough.assign(
+        testcases =RunnablePassthrough().pick(["solution","testcases"]) | (lambda x:verify_and_update_testcases(**x))
     )
-
 
 # 
 

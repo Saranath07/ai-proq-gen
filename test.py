@@ -1,5 +1,4 @@
-def sum_integers_in_string(s:str)->int:
-    return sum(map(int, filter(str.isdigit, ''.join(filter(str.isalpha, s))))
-        import sys
-        exec(sys.stdin.read())
-        
+def max_value_in_matrix(matrix:list[list[int]])->int:
+    return max(max(row) for row in matrix)
+import sys
+exec(sys.stdin.read())
