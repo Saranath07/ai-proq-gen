@@ -12,13 +12,17 @@ def serialize_metadata(value):
         return json.dumps(value)
     return value
 
+def extract_testcases(x):
+    testcases = x.get("testcases", {}).get("testcases", [])
+    return serialize_metadata(testcases)
+
 extract_text_metadata_chain = {
     "texts": RunnableLambda(itemgetter("statement")).map(),
     "metadatas": RunnableParallel({
         "solution": itemgetter("solution"),
         "tags": lambda x: ",".join(x.get("tags", [])),
         "data_formats": lambda x: ",".join(x.get("data_formats", [])),
-        "testcases": lambda x: serialize_metadata(x.get("testcases", []))
+        "testcases": extract_testcases
     }).map()
 }
 
