@@ -1,6 +1,5 @@
-def count_words(sentence:str)->dict:
-    words = sentence.split()
-    return {word: words.count(word) for word in set(words)}
+def max_a_word(sentence:str):
+    return max(sentence.split(), key=lambda x: x.count('a'))
         import sys
         exec(sys.stdin.read())
         
