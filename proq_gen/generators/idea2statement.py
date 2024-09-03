@@ -3,6 +3,18 @@ from langchain_core.runnables import RunnableLambda
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_groq import ChatGroq
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Now you can access the GROQ_API_KEY
+groq_api_key = os.getenv('GROQ_API_KEY')
+
+# If needed, pass the key explicitly
+# Example:
+# model = ChatGroq(temperature=.7, model="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 
 model = ChatGroq(temperature=.7,model="llama-3.1-8b-instant")
 
