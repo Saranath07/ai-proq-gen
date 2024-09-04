@@ -23,7 +23,7 @@ def print_n_value(n_value):
 def submit_second_page(theme, topic):
     db_store = get_db_store("python-questions")
     questions = db_store.similarity_search(topic)
-    
+    print(questions)
 
     questions_json = json.loads(data_to_json(questions))
     # print(questions_json)
