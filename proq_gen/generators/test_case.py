@@ -7,6 +7,7 @@ import subprocess
 import sys
 import json
 import random
+import tempfile
 
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -56,18 +57,20 @@ def verify_and_update_testcases(solution, testcases):
 import sys
 exec(sys.stdin.read())
 """
-    with open("test.py", "w") as f:
+    
+    with tempfile.NamedTemporaryFile(delete_on_close=False, mode='w') as f:
         f.write(solution + suffix)
+        f.close()
 
-    updated_testcases = []
-    for testcase in testcases:
-        process = subprocess.run(
-            [sys.executable, "test.py"],
-            input=testcase["input"],
-            text=True,
-            capture_output=True,
-        )
-        actual_output = process.stdout.strip()
+        updated_testcases = []
+        for testcase in testcases:
+            process = subprocess.run(
+                [sys.executable, f.name],
+                input=testcase["input"],
+                text=True,
+                capture_output=True,
+            )
+            actual_output = process.stdout.strip()
 
         updated_testcase = {
             "input": testcase["input"],

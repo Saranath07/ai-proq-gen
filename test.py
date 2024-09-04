@@ -1,4 +1,4 @@
-def count_words_with_digits(sentence:str)->int:
-    return sum(any(char.isdigit() for char in word) for word in sentence.split())
+def col_with_max_sum(matrix:list[list[int]])->int:
+    return max(range(len(matrix[0])), key=lambda x: sum(row[x] for row in matrix))
 import sys
 exec(sys.stdin.read())
