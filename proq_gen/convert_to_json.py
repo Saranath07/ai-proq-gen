@@ -9,7 +9,7 @@ def data_to_json(questions):
             "question_template" : doc.metadata.get("question_template"),
             "function_name" : doc.metadata.get("function_name"),
             "data_formats": doc.metadata.get("data_formats", ""),
-            # "solution": doc.metadata.get("solution", ""),
+            "solution": doc.metadata.get("solution", ""),
             "tags": doc.metadata.get("tags", ""),
             "testcases": json.loads(doc.metadata.get("testcases", "[]")),
             "testcasetype": doc.metadata.get("testcasetype", "")

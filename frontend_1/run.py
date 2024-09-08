@@ -3,6 +3,7 @@ import os
 import json
 import ast
 import requests
+from PythonQuestionMaker import QuestionMaker
 from difflib import Differ
 from jinja2 import Template, Environment
 testcases_template = Template('''
@@ -78,10 +79,9 @@ def update_question(selected_question, data):
             return (selected_data["question"],
                     len(selected_data['testcases']),
                     selected_data['testcases'],
-                    # str(selected_data['testcases']),
+                    # str(selected_data['test_cases']),
                     testcases_template.render(testcases = selected_data['testcases']),
-                    function_template,
-                    "")
+                    function_template)
 
 
 
