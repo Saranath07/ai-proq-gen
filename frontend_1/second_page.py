@@ -6,7 +6,7 @@ from proq_gen.convert_to_json import data_to_json
 from run import update_question, run_code
 from difflib import Differ
 
-
+from template import make_template_outputs, make_template_testcases
 def print_n_value(n_value):
     global no_tests
     no_tests = n_value  # Store the value in the global variable
@@ -59,18 +59,16 @@ def create_third_page(data_state):
         )
         
         question_select.change(
-            fn=update_question, 
+            fn=make_template_testcases, 
             inputs=[question_select, data_state], 
             outputs=[question_display, testcases_state, code_input]
         )
-     
+        print(question_select)
         run_button.click(
-            fn=lambda code, question, data: run_code(code, question, data), 
+            fn=lambda code, question, data: make_template_outputs(code, question, data), 
             inputs=[code_input, question_select, data_state], 
             outputs=[outputs_md]  # Ensure this is JSON formatted
         )
 
     return page3, question_select
 
-# If run_code does not return a JSON object, update it to ensure proper JSON data is returned.
-# This will help to render JSON correctly using gr.JSON component.

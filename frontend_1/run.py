@@ -7,7 +7,6 @@ from PythonQuestionMaker import QuestionMaker
 from difflib import Differ
 from jinja2 import Template, Environment
 
-from template import output_template, testcases_template
 
 
 def update_question(selected_question, data):
@@ -16,11 +15,8 @@ def update_question(selected_question, data):
             selected_data = next(d for d in data if d['question'] == selected_question)
             function_template = selected_data['question_template'].replace("\\n", "\n")
             return (selected_data["question"],
-                    testcases_template.render(testcases = selected_data['testcases']),
+                    selected_data['testcases'],
                     function_template)
-
-
-
 
 
 
@@ -84,13 +80,12 @@ if __name__ == "__main__":
             response = requests.post("https://emkc.org/api/v2/piston/execute", json=payload)
             execution_result = response.json()
 
-            # Extract the output from the API response
+    
             actual_output = execution_result['run']['output'].strip() if 'run' in execution_result and 'output' in execution_result['run'] else ""
             actual_output_messages.append(actual_output)
             match_flag = (str(expected_output).strip() == actual_output)
 
-            # Format the output message based on whether the result matches the expected output
-          
+     
             expected_output_messages.append(expected_output)
 
           
@@ -101,5 +96,5 @@ if __name__ == "__main__":
 
 
     output_json = {"actual_output": actual_output_messages, "expected_output":expected_output_messages }
-    # return output_json
+    return output_json
     return output_template.render(output_json=output_json)
