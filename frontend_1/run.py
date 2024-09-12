@@ -6,70 +6,9 @@ import requests
 from PythonQuestionMaker import QuestionMaker
 from difflib import Differ
 from jinja2 import Template, Environment
-testcases_template = Template('''
-{% for testcase in  testcases %}
-### Input {{loop.index}}
-```
-{{testcase.input}}
-```
-### Expected Output {{loop.index}}
-```
-{{testcase.output}}
-```  
 
-                                                                  
-{% endfor %}
-''')
+from template import output_template, testcases_template
 
-
-
-output_template = Template('''
-{% for output in  outputs %}
-### Actual Output {{loop.index}}
-```
-{{output}}                       
-```
-{% endfor %}
-
-
-''')
-
-
-
-
-
-diff_template = Template('''
-{% for diff in  diffs %}
-### Difference{{loop.index}}
-```
-({{diff}})                       
-```
-{% endfor %}
-
-
-''')
-
-
-"""
-testcases = [{input: ... , output:...}]
-testcases:{input:[], output:[]}
-
-"""
-
-"""
- "testcases": [
-        {
-            "input": "fruits.txt",
-            "content" : "apple \\n mango \\n banana",
-            "output": "['apple', 'mango', 'banana']"
-        },
-        {
-            "input": "fruits.txt",
-            "content" : "blueberry \\n strawberry \\n raspberry",
-            "output": "['blueberry', 'strawberry', 'raspberry']"
-        }
-    ]
-"""
 
 def update_question(selected_question, data):
             if data is None or not data:
@@ -77,36 +16,32 @@ def update_question(selected_question, data):
             selected_data = next(d for d in data if d['question'] == selected_question)
             function_template = selected_data['question_template'].replace("\\n", "\n")
             return (selected_data["question"],
-                    len(selected_data['testcases']),
-                    selected_data['testcases'],
-                    # str(selected_data['test_cases']),
                     testcases_template.render(testcases = selected_data['testcases']),
                     function_template)
 
 
 
 
-import gradio as gr
 
-def diff_texts(text1, text2):
-    d = Differ()
-    return [
-        (token[2:], token[0] if token[0] != " " else None)
-        for token in d.compare(text1, text2)
-    ]
 
-def run_code(code, selected_question, data):
-    outputs = []
-    diffs = []
+
+
+import json
+
+def run_code(code_snippet, selected_question, test_data):
+    actual_output_messages = []
+    expected_output_messages = []
 
     try:
-        if data is None or not data:
+        if test_data is None or not test_data:
             return ["No data available.", "No data available.", "", ""]
 
-        selected_data = next(d for d in data if d['question'] == selected_question)
-        function_name = selected_data["function_name"]
 
-        # Create the execution code dynamically using string interpolation
+        selected_test_data = next((item for item in test_data if item['question'] == selected_question), None)
+        if not selected_test_data:
+            return ["Selected question not found.", "Selected question not found.", "", ""]
+
+        function_name = selected_test_data["function_name"]
         execution_code = f"""
 if __name__ == "__main__":
     import sys
@@ -114,51 +49,57 @@ if __name__ == "__main__":
     from inspect import signature
 
     # Read parameters from stdin
-    params = json.loads(sys.stdin.read())
-    
+    parameters = json.loads(sys.stdin.read())
+
     sig = signature({function_name})
     if len(sig.parameters) == 1:
-        result = {function_name}(params)  # Pass the list as a single argument
-    elif isinstance(params, dict):
-        result = {function_name}(**params)  # Use **params to unpack dictionary
+        result = {function_name}(parameters)  # Pass the list as a single argument
+    elif isinstance(parameters, dict):
+        result = {function_name}(**parameters)  # Use **params to unpack dictionary
     else:
-        result = {function_name}(*params)  # Use *params to unpack list
-    print(result)       
+        result = {function_name}(*parameters)  # Use *params to unpack list
+    print(result)
 """
 
         # Combine the provided code and the execution code
-        full_code = code + execution_code
+        complete_code = code_snippet + execution_code
 
-        for test_case in selected_data['testcases']:
-            inputs = json.dumps(test_case["input"])  # Ensure inputs are a JSON string
+        # Loop through each test case
+        for test_case in selected_test_data['testcases']:
+            input_data = json.dumps(test_case["input"])  # Ensure inputs are in JSON string format
             expected_output = test_case["output"]
 
+            # Prepare the payload for the Piston API
             payload = {
                 "language": "python",
                 "version": "3.10.0",
                 "files": [{
                     "name": "script.py",
-                    "content": full_code
+                    "content": complete_code
                 }],
-                "stdin": inputs  # Pass input data via stdin
+                "stdin": input_data  # Pass input data via stdin
             }
 
+            # Send the request to the Piston API
             response = requests.post("https://emkc.org/api/v2/piston/execute", json=payload)
-            result = response.json()
+            execution_result = response.json()
 
-            output_o = result['run']['output'].strip() if 'run' in result and 'output' in result['run'] else ""
-            match_flag = (str(expected_output).strip() == output_o)
+            # Extract the output from the API response
+            actual_output = execution_result['run']['output'].strip() if 'run' in execution_result and 'output' in execution_result['run'] else ""
+            actual_output_messages.append(actual_output)
+            match_flag = (str(expected_output).strip() == actual_output)
 
-            output = f"{output_o}\nMatch: {'✅' if match_flag else '❌'}\n"
-            outputs.append(output)
+            # Format the output message based on whether the result matches the expected output
+          
+            expected_output_messages.append(expected_output)
 
-            # Calculate the difference for displaying in the diff box
-            diff = diff_texts(str(expected_output), output_o)
-            diffs.append(diff)
+          
 
     except Exception as e:
-        outputs = [f"An error occurred: {str(e)}"] * 2
-        diffs = [""] * 2
+        # Handle exceptions by returning an error message
+        output_messages = [f"An error occurred: {str(e)}"] * 2
 
-    # Ensure to return exactly four items
-    return output_template.render(outputs=outputs), diff_template.render(diffs=diffs)
+
+    output_json = {"actual_output": actual_output_messages, "expected_output":expected_output_messages }
+    # return output_json
+    return output_template.render(output_json=output_json)

@@ -5,70 +5,45 @@ import json
 from proq_gen.convert_to_json import data_to_json
 from run import update_question, run_code
 from difflib import Differ
-# Initialize the global variable
-no_tests = None
-def diff_texts(text1, text2):
-    d = Differ()
-    return [
-        (token[2:], token[0] if token[0] != " " else None)
-        for token in d.compare(text1, text2)
-    ]
+
+
 def print_n_value(n_value):
     global no_tests
     no_tests = n_value  # Store the value in the global variable
-    print(f"Value of n stored in no_tests: {no_tests}")
+    # print(f"Value of n stored in no_tests: {no_tests}")
     return n_value  # Return the value if needed for further processing
-def submit_second_page(theme, topic):
+
+def submit_second_page(topic):
     db_store = get_db_store("python-questions")
-    # print(db_store.get())
     questions = db_store.similarity_search(topic)
-    
 
     questions_json = json.loads(data_to_json(questions))
+
     # print(questions_json)
-    # return questions_json
-    # questionMaker = QuestionMaker(topic, theme)
-    # userQuestions = questionMaker.get_questions(5)
-    # new_data = []
-    # for i in range(len(userQuestions)):
-    #     try:
-    #         d = ast.literal_eval(userQuestions[i])
-    #         new_data.append(d)
-    #     except Exception as e:
-    #         print(f"Failed to write question {i+1}: {e}")
-    print(questions_json)
+    # Update the dropdown with questions
     return questions_json, gr.update(choices=[d['question'] for d in questions_json])
 
 def create_third_page(data_state):
-
     with gr.Column(visible=True) as page3:
         gr.Markdown("# Programming in Python")
         with gr.Row():
             with gr.Column(scale=1):
-                theme = gr.Textbox(label="Select theme")
+                # theme = gr.Textbox(label="Select theme")
                 topic = gr.Textbox(label="Select Topic")
                 submit2 = gr.Button("Submit", elem_id="submit2")
                 
                 with gr.Tab("Question"):
                     question_select = gr.Dropdown(label="Select Question", choices=[], interactive=True)
                     question_display = gr.Textbox(label="Question", interactive=False)
-                    n = gr.Textbox()
                    
                 with gr.Tab("Test Cases"):
-                    testcases_state = gr.State()
-                    testcases_md = gr.Markdown(label='testcases')
-                # with gr.Tab("Outputs"):
+                    # testcases_state = gr.State()
+                    testcases_state = gr.Markdown(label = 'testcases')
+                    # testcases_md = gr.Markdown(label='Test cases')
+                
                 with gr.Tab("Output"):
-                    outputs_md = gr.Markdown(label='actual outputs')
-                    diffs_md = gr.Markdown(label ="Difference")
-                                
-                    
+                    outputs_md = gr.Markdown(label = "Output") # JSON output component
                 
-
-                
-                    # diff_1 = gr.HighlightedText(label="Diff", combine_adjacent=True, show_legend=True, color_map={"+": "red", "-": "green"})
-                    # diff_2 = gr.HighlightedText(label="Diff", combine_adjacent=True, show_legend=True, color_map={"+": "red", "-": "green"})
-
                 with gr.Tab("Solution 🔒"):
                     gr.Textbox("This is a Sample solution")
                     
@@ -76,9 +51,26 @@ def create_third_page(data_state):
                 code_input = gr.Code(label="Write your code here", language="python", lines=10, interactive=True)
                 run_button = gr.Button("Run")
 
-        submit2.click(fn=submit_second_page, inputs=[theme, topic], outputs=[data_state, question_select])
-        question_select.change(fn=update_question, inputs=[question_select, data_state], outputs=[question_display, n, testcases_state, testcases_md, code_input])
-        print(question_select.input())
-        run_button.click(fn=run_code, inputs=[code_input, question_select, data_state], outputs=[outputs_md, diffs_md])
+        # Connect buttons to functions
+        submit2.click(
+            fn=submit_second_page, 
+            inputs=[topic], 
+            outputs=[data_state, question_select]
+        )
+        
+        question_select.change(
+            fn=update_question, 
+            inputs=[question_select, data_state], 
+            outputs=[question_display, testcases_state, code_input]
+        )
+     
+        run_button.click(
+            fn=lambda code, question, data: run_code(code, question, data), 
+            inputs=[code_input, question_select, data_state], 
+            outputs=[outputs_md]  # Ensure this is JSON formatted
+        )
 
     return page3, question_select
+
+# If run_code does not return a JSON object, update it to ensure proper JSON data is returned.
+# This will help to render JSON correctly using gr.JSON component.
