@@ -10,10 +10,12 @@ from jinja2 import Template, Environment
 
 
 def update_question(selected_question, data):
+            # print(selected_data['testcases'])
             if data is None or not data:
                 return "", "", "", "", "", ""
             selected_data = next(d for d in data if d['question'] == selected_question)
             function_template = selected_data['question_template'].replace("\\n", "\n")
+            print(selected_data['testcases'])
             return (selected_data["question"],
                     selected_data['testcases'],
                     function_template)
