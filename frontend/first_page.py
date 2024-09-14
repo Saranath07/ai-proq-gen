@@ -3,12 +3,8 @@ import os
 import json
 import ast
 import requests
+
 from difflib import Differ
-
-# from proq_gen.generators.chroma import get_db_store
-
-# db_store = get_db_store("python-questions")
-# print(db_store.get())
 
 def submit_first_page(name, roll_no):
     # Process the input data

@@ -1,1 +1,0 @@
-export PYTHONPATH="/home/saranathp/ai-proq-gen:$PYTHONPATH"

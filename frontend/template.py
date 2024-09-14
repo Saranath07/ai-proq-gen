@@ -3,7 +3,6 @@ import os
 import json
 import ast
 import requests
-from PythonQuestionMaker import QuestionMaker
 from difflib import Differ
 from jinja2 import Template, Environment
 
