@@ -33,7 +33,11 @@ def make_template_testcases(selected_question, data):
 
 def make_template_outputs(code_snippet, selected_question, test_data):
     from run import run_code
-    output_json = run_code(code_snippet, selected_question, test_data)
+    selected_data = next((item for item in test_data if item['question'] == selected_question), None)
+    test_cases = selected_data['testcases']
+    input_type = selected_data['input_type']
+    
+    output_json = run_code(code_snippet, test_cases, input_type)
 
     def zip_filter(a, b):
         return zip(a, b)
@@ -57,4 +61,4 @@ def make_template_outputs(code_snippet, selected_question, test_data):
 
     ''')
 
-    return output_template.render(output_json = output_json)
+    return output_template.render(output_json = output_json), "Sample Solution"

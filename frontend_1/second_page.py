@@ -9,8 +9,8 @@ from difflib import Differ
 from template import make_template_outputs, make_template_testcases
 def print_n_value(n_value):
     global no_tests
-    no_tests = n_value  # Store the value in the global variable
-    # print(f"Value of n stored in no_tests: {no_tests}")
+    no_tests = n_value 
+
     return n_value  # Return the value if needed for further processing
 
 def submit_second_page(topic):
@@ -18,13 +18,11 @@ def submit_second_page(topic):
     questions = db_store.similarity_search(topic)
 
     questions_json = json.loads(data_to_json(questions))
-    print(questions_json)
-
-    # print(questions_json)
-    # Update the dropdown with questions
+ 
     return questions_json, gr.update(choices=[d['question'] for d in questions_json])
 
 def create_third_page(data_state):
+    # solution_visible = gr.State(False)
     with gr.Column(visible=True) as page3:
         gr.Markdown("# Programming in Python")
         with gr.Row():
@@ -45,8 +43,9 @@ def create_third_page(data_state):
                 with gr.Tab("Output"):
                     outputs_md = gr.Markdown(label = "Output") # JSON output component
                 
+                # with gr.Tab("Solution 🔒"):
                 with gr.Tab("Solution 🔒"):
-                    gr.Textbox("This is a Sample solution")
+                    solution = gr.Textbox("Solution Locked")
                     
             with gr.Column(scale=1):
                 code_input = gr.Code(label="Write your code here", language="python", lines=10, interactive=True)
@@ -64,11 +63,11 @@ def create_third_page(data_state):
             inputs=[question_select, data_state], 
             outputs=[question_display, testcases_state, code_input]
         )
-        print(question_select)
+        # print(question_select)
         run_button.click(
             fn=lambda code, question, data: make_template_outputs(code, question, data), 
             inputs=[code_input, question_select, data_state], 
-            outputs=[outputs_md]  # Ensure this is JSON formatted
+            outputs=[outputs_md, solution]  # Ensure this is JSON formatted
         )
 
     return page3, question_select
