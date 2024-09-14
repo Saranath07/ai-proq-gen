@@ -12,7 +12,7 @@ def data_to_json(questions):
             "solution": doc.metadata.get("solution", ""),
             "tags": doc.metadata.get("tags", ""),
             "testcases": json.loads(doc.metadata.get("testcases", "[]")),
-            "testcasetype": doc.metadata.get("testcasetype", "")
+            "input_type": doc.metadata.get("input_type", "")
             
         }
         questions_json.append(question_obj)
