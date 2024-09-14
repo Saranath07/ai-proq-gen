@@ -24,45 +24,21 @@ def update_question(selected_question, data):
 
 import json
 
-def run_code(code_snippet, selected_question, test_data):
+def run_code(code_snippet,test_cases, input_type = "stdin"):
+    if input_type == "code":
+        code_snippet += "\nimport sys; exec(sys.stdin.read())" 
+           
+    
+    # print(type(code_snippet))
     actual_output_messages = []
     expected_output_messages = []
 
-    try:
-        if test_data is None or not test_data:
-            return ["No data available.", "No data available.", "", ""]
 
-
-        selected_test_data = next((item for item in test_data if item['question'] == selected_question), None)
-        if not selected_test_data:
-            return ["Selected question not found.", "Selected question not found.", "", ""]
-
-        function_name = selected_test_data["function_name"]
-        execution_code = f"""
-if __name__ == "__main__":
-    import sys
-    import json
-    from inspect import signature
-
-    # Read parameters from stdin
-    parameters = json.loads(sys.stdin.read())
-
-    sig = signature({function_name})
-    if len(sig.parameters) == 1:
-        result = {function_name}(parameters)  # Pass the list as a single argument
-    elif isinstance(parameters, dict):
-        result = {function_name}(**parameters)  # Use **params to unpack dictionary
-    else:
-        result = {function_name}(*parameters)  # Use *params to unpack list
-    print(result)
-"""
-
-        # Combine the provided code and the execution code
-        complete_code = code_snippet + execution_code
-
-        # Loop through each test case
-        for test_case in selected_test_data['testcases']:
-            input_data = json.dumps(test_case["input"])  # Ensure inputs are in JSON string format
+    for test_case in test_cases:
+            
+            input_data = test_case["input"]  # Ensure inputs are in JSON string format
+   
+            
             expected_output = test_case["output"]
 
             # Prepare the payload for the Piston API
@@ -71,7 +47,7 @@ if __name__ == "__main__":
                 "version": "3.10.0",
                 "files": [{
                     "name": "script.py",
-                    "content": complete_code
+                    "content": code_snippet
                 }],
                 "stdin": input_data  # Pass input data via stdin
             }
@@ -90,10 +66,7 @@ if __name__ == "__main__":
 
           
 
-    except Exception as e:
-        # Handle exceptions by returning an error message
-        output_messages = [f"An error occurred: {str(e)}"] * 2
-
+ 
 
     output_json = {"actual_output": actual_output_messages, "expected_output":expected_output_messages }
     return output_json
