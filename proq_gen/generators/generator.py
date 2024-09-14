@@ -23,6 +23,7 @@ extract_text_metadata_chain = {
         "question_template": itemgetter("question_template"),
         "function_name": itemgetter("function_name"),
         "tags": lambda x: ",".join(x.get("tags", [])),
+        "input_type" : itemgetter("input_type"),
         "data_formats": lambda x: ",".join(x.get("data_formats", [])),
         "testcases": extract_testcases
     }).map()

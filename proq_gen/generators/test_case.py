@@ -42,6 +42,26 @@ Respond only in JSON format. Do not include any additional text.
         ),
         (
             "human",
+            "Problem: Write a program to multiply 2 inetegers\nn_testcases: 3\n soltuion : a = int(input())\n b = int(input())\nprint(a * b)\n",
+        ),
+        (
+            "ai",
+            """[
+        
+    {{
+        "input": "3 4",
+        "output": "12"
+    }},
+     {{
+        "input": "5 6",
+        "output": "30"
+     }}
+]
+
+""",
+        ),
+        (
+            "human",
             "Problem: {statement}\nn_testcases: {n_testcases}\n solution: {solution}\n",
         ),
     ]
