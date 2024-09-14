@@ -33,10 +33,12 @@ def run_code(code_snippet,test_cases, input_type = "stdin"):
     actual_output_messages = []
     expected_output_messages = []
 
-
+    print(test_cases)
     for test_case in test_cases:
             
+            print(test_case)
             input_data = test_case["input"]  # Ensure inputs are in JSON string format
+
    
             
             expected_output = test_case["output"]

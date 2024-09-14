@@ -21,12 +21,13 @@ def print_n_value(n_value):
     return n_value  # Return the value if needed for further processing
 
 def submit_second_page(theme, topic):
-    db_store = get_db_store("python-questions")
+    db_store = get_db_store("python-questions", persist_directory="../chroma")
     # print(db_store.get())
     questions = db_store.similarity_search(topic)
-    
+   
 
     questions_json = json.loads(data_to_json(questions))
+    print(questions_json)
     # print(questions_json)
     # return questions_json
     # questionMaker = QuestionMaker(topic, theme)

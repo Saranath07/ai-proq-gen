@@ -10,10 +10,11 @@ if os.environ.get("HUGGINGFACEHUB_API_TOKEN"):
 else:
     embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-def get_db_store(collection_name="python-questions",persist_directory="./chroma"):
+def get_db_store(collection_name="python-questions",persist_directory="../chroma"):
     return Chroma(
         collection_name=collection_name,
         persist_directory=persist_directory,
         embedding_function=embedding,
     )
+
 
