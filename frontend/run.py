@@ -14,8 +14,9 @@ def update_question(selected_question, data):
                 return "", "", "", "", "", ""
             selected_data = next(d for d in data if d['question'] == selected_question)
             function_template = selected_data['question_template'].replace("\\n", "\n")
- 
-            return (selected_data["question"],
+            # print(selected_data)
+            return (selected_data['solution'],
+                    selected_data["question"],
                     selected_data['testcases'],
                     function_template)
 

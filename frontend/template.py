@@ -13,7 +13,7 @@ from jinja2 import Template, Environment
 def make_template_testcases(selected_question, data):
     from run import update_question
     
-    question_display, testcases, code_input = update_question(selected_question, data)
+    solution, question_display, testcases, code_input = update_question(selected_question, data)
     testcases_template = Template('''
     {% for testcase in  testcases %}
     ### Input {{loop.index}}
@@ -28,7 +28,7 @@ def make_template_testcases(selected_question, data):
                                                                     
     {% endfor %}
     ''')
-    return question_display, testcases_template.render(testcases = testcases), code_input
+    return solution, question_display, testcases_template.render(testcases = testcases), code_input
 
 def make_template_outputs(code_snippet, selected_question, test_data):
     from run import run_code
@@ -60,4 +60,4 @@ def make_template_outputs(code_snippet, selected_question, test_data):
 
     ''')
 
-    return output_template.render(output_json = output_json), "Sample Solution"
+    return output_template.render(output_json = output_json)

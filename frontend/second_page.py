@@ -7,6 +7,11 @@ from run import update_question, run_code
 from difflib import Differ
 
 from template import make_template_outputs, make_template_testcases
+count = 0
+def increment_count():
+    global count
+    count += 1
+    return count
 def print_n_value(n_value):
     global no_tests
     no_tests = n_value 
@@ -45,7 +50,7 @@ def create_third_page(data_state):
                 
                 # with gr.Tab("Solution 🔒"):
                 with gr.Tab("Solution 🔒"):
-                    solution = gr.Textbox("Solution Locked")
+                    solution = gr.Code("Solution Locked")
                     
             with gr.Column(scale=1):
                 code_input = gr.Code(label="Write your code here", language="python", lines=10, interactive=True)
@@ -61,14 +66,17 @@ def create_third_page(data_state):
         question_select.change(
             fn=make_template_testcases, 
             inputs=[question_select, data_state], 
-            outputs=[question_display, testcases_state, code_input]
+            outputs=[solution, question_display, testcases_state, code_input]
         )
-        # print(question_select)
+        
         run_button.click(
-            fn=lambda code, question, data: make_template_outputs(code, question, data), 
+            fn=lambda code, question, data: (make_template_outputs(code, question, data)), 
             inputs=[code_input, question_select, data_state], 
-            outputs=[outputs_md, solution]  # Ensure this is JSON formatted
+            outputs=[outputs_md] 
         )
+     
 
+   
     return page3, question_select
 
+# demo.launch(share=True)
