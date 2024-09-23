@@ -61,7 +61,7 @@ it should just have normal inputs
 
 """,
         ),
-         (
+        (
             "human",
             "Problem: Given two integers a and b, find their difference.\nn_testcases: 3\n soltuion : def sub(a, b):\n    return a - b\n input_type : code\n",
         ),
@@ -127,7 +127,7 @@ test_case_processor = model | JsonOutputParser()
 #         f.write(solution + suffix)
 #         f.close()
 
-       
+
 #         for testcase in testcases:
 #             process = subprocess.run(
 #                 [sys.executable, f.name],
@@ -145,13 +145,14 @@ test_case_processor = model | JsonOutputParser()
 
 #     return updated_testcases
 
+
 def verify_and_update_testcases(solution, testcases):
     suffix = """
 import sys
 exec(sys.stdin.read())
 """
-    
-    with tempfile.NamedTemporaryFile(delete_on_close=False, mode='w') as f:
+
+    with tempfile.NamedTemporaryFile(delete_on_close=False, mode="w") as f:
         f.write(solution + suffix)
         f.close()
 
@@ -167,11 +168,12 @@ exec(sys.stdin.read())
 
             updated_testcase = {
                 "input": testcase["input"],
-                "output": actual_output if actual_output else "Error: No output"
+                "output": actual_output if actual_output else "Error: No output",
             }
             updated_testcases.append(updated_testcase)  # Append each updated test case
 
-    return updated_testcases 
+    return updated_testcases
+
 
 def get_test_case_chain(lang, n_testcases):
     partial_prompt = prompt.partial(lang=lang, n_testcases=n_testcases)
@@ -183,9 +185,14 @@ def get_test_case_chain(lang, n_testcases):
             "testcases": RunnableParallel(
                 {
                     "generated_testcases": partial_prompt | test_case_processor,
-                    "solution": itemgetter("solution")
+                    "solution": itemgetter("solution"),
                 }
-            ) | (lambda x: verify_and_update_testcases(x["solution"], x["generated_testcases"]))
+            )
+            | (
+                lambda x: verify_and_update_testcases(
+                    x["solution"], x["generated_testcases"]
+                )
+            ),
         }
     )
 

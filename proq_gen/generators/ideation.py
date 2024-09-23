@@ -28,21 +28,27 @@ model = ChatGroq(temperature=1, model="llama3-70b-8192")
 
 ideation_processor = model | JsonOutputParser()
 
-def get_ideation_chain(lang, concept_groups:list[tuple[list[str],int]], example_concepts:str, examples:str):
+
+def get_ideation_chain(
+    lang,
+    concept_groups: list[tuple[list[str], int]],
+    example_concepts: str,
+    examples: str,
+):
     return (
         RunnableAssign(
             {
                 "concepts": lambda x: (
-                    concept 
-                    for concepts,concept_counts in concept_groups
-                    for concept in random.choices(concepts,k=concept_counts)
+                    concept
+                    for concepts, concept_counts in concept_groups
+                    for concept in random.choices(concepts, k=concept_counts)
                 )
             }
         )
         | prompt.partial(
             lang=lang,
             example_concepts=json.dumps(example_concepts),
-            examples=json.dumps(examples)
+            examples=json.dumps(examples),
         )
         | ideation_processor
     )
